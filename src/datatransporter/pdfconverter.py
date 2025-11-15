@@ -5,6 +5,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 import sys
+from datetime import datetime
 
 class PdfConverter:
     def __init__(self):
@@ -15,8 +16,8 @@ class PdfConverter:
             with open(file_path, "r", encoding="utf-8") as f:
                 input_text = f.read()
             input_text = input_text.replace("**", "")
-
-            output_pdf_path = r"C:\mini_project\data\final_notes.pdf"
+            timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+            output_pdf_path = fr"C:\mini_project\data\{timestamp}.pdf"
             styles = getSampleStyleSheet()
             doc = SimpleDocTemplate(output_pdf_path, pagesize=letter)
 

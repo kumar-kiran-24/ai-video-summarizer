@@ -6,6 +6,7 @@ import os
 import sys
 from dotenv import load_dotenv
 load_dotenv()
+from datetime import datetime
 
 groq_api=os.getenv("GROK_API_KEY")
 
@@ -17,7 +18,8 @@ class TextGenerator:
 
     def intiatetextgenerator(self,audio_path):
         try:
-            output_path=r"C:\mini_project\data\transcript.txt"
+            timestamp = datetime.now().strftime("%Y-%m-%d_%I-%M-%S_%p")
+            output_path=fr"C:\mini_project\data\{timestamp}.txt"
 
 
             with open(audio_path,"rb")as file:
@@ -31,7 +33,7 @@ class TextGenerator:
             
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(transcript_text) 
-            return response
+            return output_path
         except Exception as e:
             CustomException(e,sys)
 

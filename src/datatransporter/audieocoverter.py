@@ -3,6 +3,7 @@ from src.utils.logger import logging
 
 from moviepy.video.io.VideoFileClip import VideoFileClip
 import sys
+from datetime import datetime
 
 class audioconverter:
     def __init__(self):
@@ -10,8 +11,8 @@ class audioconverter:
 
     def intiate_audioconverter(self, video_path):
         try:
-           
-            audio_path = r"C:\mini_project\data\output_audio.wav"
+            timestamp = datetime.now().strftime("%Y-%m-%d_%I-%M-%S_%p")
+            audio_path = fr"C:\mini_project\data\{timestamp}.wav"
 
             with VideoFileClip(video_path) as video:
                 video.audio.write_audiofile(audio_path)

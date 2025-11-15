@@ -8,6 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 import os
 import sys
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -50,8 +51,10 @@ class NotesGenerator:
     def __init__(self):
         pass
 
-    def notesgenerator(self, file_path, output_path):
+    def notesgenerator(self, file_path):
         try:
+            timestamp = datetime.now().strftime("%Y-%m-%d_%I-%M-%S_%p")
+            output_path=fr"C:\mini_project\data\Notes\{timestamp}.txt"
          
             with open(file_path, "r", encoding="utf-8") as f:
                 input_text = f.read()
@@ -78,6 +81,5 @@ class NotesGenerator:
 if __name__ == "__main__":
     generator = NotesGenerator()
     generator.notesgenerator(
-        file_path=r"C:\mini_project\data\transcript.txt",
-        output_path=r"C:\mini_project\data\generated_notes.txt"
+        file_path=r"C:\mini_project\data\transcript.txt"
     )
