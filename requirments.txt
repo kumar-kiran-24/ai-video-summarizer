@@ -5,3 +5,6 @@ langchain
 langchain-groq
 langchain-community
 langchain-core
+flask
+uuid
+flask_cors

@@ -20,13 +20,11 @@ llm = ChatGroq(
 class ChatBot:
     try:
         logging.info("chatbot is ready for the give the response")
-        def __init__(self, pdf_path):
-            self.pdf_path = pdf_path
-            reader = PdfReader(pdf_path)
-            content_text = ""
+        def __init__(self, txt_path):
 
-            for page in reader.pages:
-                content_text += page.extract_text() + "\n"
+            self.txt_path=txt_path
+            with open(txt_path,"r",encoding="utf-8") as f:
+                content_text=f.read()
 
             self.context = content_text
             self.history = []

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video to Notes + Chatbot</title>
+
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #0d0d0d;
+            color: white;
+        }
+
+        /* ---------------- LEFT UPLOAD SECTION ---------------- */
+        #upload-section {
+            width: 70%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ebebebff;
+            border-right: 2px solid #1f1f1f;
+        }
+
+        .upload-box {
+            background: #1a1a1a;
+            padding: 40px;
+            width: 60%;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.06);
+            text-align: center;
+        }
+
+        .upload-box h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #e6e6e6;
+        }
+
+        input[type="file"] {
+            padding: 12px;
+            border: 2px dashed #444;
+            background: #0f0f0f;
+            width: 90%;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #bbb;
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 20px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        #status {
+            margin-top: 12px;
+            font-size: 15px;
+            color: #c7c7c7;
+        }
+
+        /* ---------------- RIGHT CHAT SECTION ---------------- */
+        #chat-section {
+            width: 30%;
+            background: #0f0f0f;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-left: 2px solid #1f1f1f;
+        }
+
+        #chat-section h3 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #999;
+        }
+
+        #messages {
+            flex-grow: 1;
+            margin-top: 10px;
+            padding: 12px;
+            border: 1px solid #222;
+            border-radius: 10px;
+            background: #0c0c0c;
+            overflow-y: auto;
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.05);
+        }
+
+        .user {
+            color: #d4d4d4;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+
+        .bot {
+            color: #4aff8f;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+
+        #chat-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="upload-section">
+    <div class="upload-box">
+        <h2>Upload Video → Generate Notes PDF</h2>
+
+        <form id="uploadForm">
+            <input type="file" id="videoFile" accept="video/*" required><br>
+            <button type="submit">Convert to PDF</button>
+        </form>
+
+        <p id="status"></p>
+    </div>
+</div>
+
+<!-- ---------------- RIGHT CHATBOT ---------------- -->
+<div id="chat-section">
+    <h3>Chatbot</h3>
+    <button onclick="resetCHAT()">New Chat</button>
+
+    <div id="messages"></div>
+
+    <input id="chat-input" type="text" placeholder="Type your message..." />
+    <button onclick="sendChat()">Send</button>
+</div>
+
+<script>
+
+// -------- VIDEO UPLOAD LOGIC ----------
+document.getElementById("uploadForm").onsubmit = async (e) => {
+    e.preventDefault();
+
+    const file = document.getElementById("videoFile").files[0];
+    const formData = new FormData();
+    formData.append("video", file);
+
+    document.getElementById("status").innerText = "Processing... Please wait.";
+
+    const response = await fetch("/upload-video", {
+        method: "POST",
+        body: formData
+    });
+
+    if (!response.ok) {
+        document.getElementById("status").innerText = "Error uploading!";
+        return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "notes.pdf";
+    a.click();
+
+    document.getElementById("status").innerText = "PDF Downloaded! You can now chat.";
+};
+
+// -------- CHAT FUNCTION ----------
+function newChat() {
+    document.getElementById("messages").innerHTML = "";
+}
+
+async function sendChat() {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if (text === "") return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+        addMessage(data.error, "bot");
+    } else {
+        addMessage(data.response, "bot");
+    }
+}
+
+function addMessage(msg, type) {
+    const messages = document.getElementById("messages");
+    const p = document.createElement("p");
+    p.className = type;
+    p.innerText = msg;
+    messages.appendChild(p);
+
+    messages.scrollTop = messages.scrollHeight; // Auto scroll
+}
+
+</script>
+
+</body>
+</html>

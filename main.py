@@ -24,7 +24,7 @@ class Main:
             notes = self.note_generator.notesgenerator(file_path=text_path)
             pdf=self.pdf_converter.pdfconverter(file_path=notes)
     
-            return pdf
+            return pdf,text_path
             
         except Exception as e:
             raise CustomException(e)
