@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ----------------- PROMPT TEMPLATE -----------------
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", """
@@ -29,16 +28,16 @@ Generate the following:
 2. **Main Topics Covered** – Bullet points
 3. **Goal of the Text** – What the author wants to achieve
 4. **Line-by-line Interpretation** – Explain each sentence in simple words
-5. **Question & Answer Pairs** – Minimum 5 Q&A
+5. **Question & Answer Pairs** – Minimum 10 Q&A
 6. **Conclusion** – Final takeaway
 7. **What You Learn From This** – Key learnings list
+8. **Question & Answer Pairs with the 10 line anwers questions,30 line answes questions & 50 line answers questions each segment contains 8 questions minimum 
 
 Make the output well-structured, clear, and formatted.
 """)
     ]
 )
 
-# ----------------- LLM INITIALIZATION -----------------
 llm = ChatGroq(
     groq_api_key=os.getenv("GROK_API_KEY"),
     model="llama-3.1-8b-instant"
@@ -53,18 +52,17 @@ class NotesGenerator:
 
     def notesgenerator(self, file_path, output_path):
         try:
-            # Read the text from input file
+         
             with open(file_path, "r", encoding="utf-8") as f:
                 input_text = f.read()
 
-            # Fill prompt template
             final_prompt = prompt.format(text=input_text)
 
-            # LLM Call
+            
             response = llm.invoke([HumanMessage(content=final_prompt)])
             notes_text = response.content
 
-            # Save to .txt file
+            
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(notes_text)
 
@@ -77,7 +75,6 @@ class NotesGenerator:
             raise CustomException(e, sys)
 
 
-# ----------------- RUN DIRECTLY -----------------
 if __name__ == "__main__":
     generator = NotesGenerator()
     generator.notesgenerator(
