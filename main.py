@@ -6,6 +6,7 @@ from src.components.notes_generator import NotesGenerator
 from src.datatransporter.audieocoverter import audioconverter
 from src.datatransporter.pdfconverter import PdfConverter
 from src.components.text_generater import TextGenerator
+from src.datatransporter.youtudedata import AudioFromYT
 
 
 class Main:
@@ -15,6 +16,7 @@ class Main:
         self.pdf_converter = PdfConverter()
         self.text_generator = TextGenerator()
         self.pdf_converter=PdfConverter()
+        self.youtube=AudioFromYT()
         
     
     def main(self, video_path):
@@ -25,9 +27,22 @@ class Main:
             pdf=self.pdf_converter.pdfconverter(file_path=notes)
     
             return pdf,text_path
-            
         except Exception as e:
             raise CustomException(e)
+        
+    def youtube_link(self,link):
+        try:
+            youtube_to_audieo=self.youtube.audio(link=link)
+            text_path = self.text_generator.intiatetextgenerator(audio_path=youtube_to_audieo)
+            notes = self.note_generator.notesgenerator(file_path=text_path)
+            pdf=self.pdf_converter.pdfconverter(file_path=notes)
+            return pdf,text_path
+        except Exception as e:
+            raise CustomException(e)
+    
+        
+            
+
             
             
 if __name__ == "__main__":

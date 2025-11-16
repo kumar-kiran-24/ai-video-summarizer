@@ -10,23 +10,20 @@ CORS(app)
 
 UPLOAD_FOLDER = "data/uploads"
 RESULT_FOLDER = "data/results"
-LAST_PDF_PATH = None
+LAST_TEXT_PATH = None
+CD = None
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULT_FOLDER, exist_ok=True)
-
-
 
 @app.route("/")
 def home_page():
     return render_template("index.html")
 
 
-
 @app.route("/upload-video", methods=["POST"])
 def upload_video():
     global LAST_TEXT_PATH
-  
 
     if "video" not in request.files:
         return jsonify({"error": "No video file provided"}), 400
@@ -37,25 +34,41 @@ def upload_video():
     file.save(video_path)
 
     main_ = Main()
-    pdf_path,text_path = main_.main(video_path=video_path)
+    pdf_path, text_path = main_.main(video_path=video_path)
 
     LAST_TEXT_PATH = text_path
-    
 
     return send_file(pdf_path, as_attachment=True)
 
 
+@app.route("/youtube-to-pdf", methods=["POST"])
+def youtube_to_pdf():
+    global LAST_TEXT_PATH
+
+    data = request.json
+    youtube_link = data.get("link")
+
+    if not youtube_link:
+        return jsonify({"error": "YouTube link required!"}), 400
+
+    main_ = Main()
+    pdf_path, text_path = main_.youtube_link(youtube_link)
+
+    LAST_TEXT_PATH = text_path
+
+    return send_file(pdf_path, as_attachment=True)
+
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    global  LAST_TEXT_PATH
+    global LAST_TEXT_PATH
     global CD
 
     if LAST_TEXT_PATH is None:
-        return jsonify({"error": "Upload a video first!"}), 400
+        return jsonify({"error": "Upload a video or YouTube link first!"}), 400
 
-    CD=ChatBot(txt_path=LAST_TEXT_PATH)
-    
+    if CD is None:
+        CD = ChatBot(txt_path=LAST_TEXT_PATH)
 
     data = request.json
     message = data.get("message", "")
@@ -67,8 +80,7 @@ def chat():
 @app.post("/reset-chat")
 def reset_chat():
     global CD
- 
-    CD.reset()  # <-- reset conversation
+    CD = None
     return {"status": "reset done"}
 
 
