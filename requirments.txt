@@ -8,3 +8,4 @@ langchain-core
 flask
 uuid
 flask_cors
+yt_dlp

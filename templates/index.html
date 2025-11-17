@@ -2,16 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Video / YouTube → Notes (PDF) + Chatbot</title>
+    <link rel="icon" type="image/png" href="static/logo2.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Meeting Summariser</title>
 
     <style>
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+        }
+
         body {
             margin: 0;
             height: 100vh;
             display: flex;
+            flex-direction: column;
             font-family: "Segoe UI", Arial, sans-serif;
             background: #0d0d0d;
             color: white;
+        }
+
+        /* ---------------- HEADER ---------------- */
+        #header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            background: #0f0f0f;
+            border-bottom: 2px solid #222;
+        }
+
+        #header h1 {
+            font-size: 28px;
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* ---------------- MAIN PAGE LAYOUT ---------------- */
+        #main {
+            display: flex;
+            height: 100%;
         }
 
         /* ---------------- LEFT PANEL ---------------- */
@@ -22,6 +56,7 @@
             align-items: center;
             background: #111;
             border-right: 2px solid #222;
+            flex-direction: column;
         }
 
         .box {
@@ -76,7 +111,7 @@
             font-size: 15px;
         }
 
-        /* --------------- CHAT SECTION --------------- */
+        /* ---------------- CHAT PANEL ---------------- */
         #chat-panel {
             width: 30%;
             padding: 20px;
@@ -96,7 +131,7 @@
         }
 
         .user { color: #d4d4d4; font-weight: 600; margin: 10px 0; }
-        .bot { color: #4aff8f; font-weight: 600; margin: 10px 0; }
+        .bot  { color: #4aff8f; font-weight: 600; margin: 10px 0; }
 
         #chat-input {
             width: 100%;
@@ -107,49 +142,58 @@
             border: 1px solid #333;
             color: white;
         }
+
     </style>
 </head>
 
 <body>
 
-<!-- LEFT SIDE -->
-<div id="left-panel">
-    <div class="box">
 
-        <h2>Convert Video / YouTube Link → Notes PDF</h2>
+<div id="header">
+    <img src="{{ url_for('static', filename='logo2.png') }}" class="logo">
+    <h1>Smart Meeting Summariser</h1>
+</div>
 
-        <!-- Upload video -->
-        <form id="uploadForm">
-            <input type="file" id="videoFile" accept="video/*"><br>
-            <button type="submit">Upload Video → PDF</button>
-        </form>
+<div id="main">
 
-        <hr>
 
-        <!-- YouTube link -->
-        <input type="text" id="ytLink" placeholder="Enter YouTube link">
-        <button onclick="processYT()">YouTube → PDF</button>
+    <div id="left-panel">
+        <div class="box">
 
-        <p id="status"></p>
+            <h2>Convert Video / YouTube Link → Notes PDF</h2>
 
+          
+            <form id="uploadForm">
+                <input type="file" id="videoFile" accept="video/*"><br>
+                <button type="submit">Upload Video → PDF</button>
+            </form>
+
+            <hr>
+
+           
+            <input type="text" id="ytLink" placeholder="Enter YouTube link">
+            <button onclick="processYT()">YouTube → PDF</button>
+
+            <p id="status"></p>
+
+        </div>
     </div>
+
+  
+    <div id="chat-panel">
+        <h3 style="text-align:center; color:#aaa;">Chatbot</h3>
+
+        <button onclick="resetCHAT()">New Chat</button>
+
+        <div id="messages"></div>
+
+        <input id="chat-input" type="text" placeholder="Type your message...">
+        <button onclick="sendChat()">Send</button>
+    </div>
+
 </div>
-
-<!-- RIGHT CHAT PANEL -->
-<div id="chat-panel">
-    <h3 style="text-align:center; color:#aaa;">Chatbot</h3>
-
-    <button onclick="resetCHAT()">New Chat</button>
-
-    <div id="messages"></div>
-
-    <input id="chat-input" type="text" placeholder="Type your message...">
-    <button onclick="sendChat()">Send</button>
-</div>
-
 
 <script>
-/* ------------ DOWNLOAD PDF ----------- */
 async function handlePdfResponse(response) {
     if (!response.ok) {
         const txt = await response.text();
@@ -168,7 +212,6 @@ async function handlePdfResponse(response) {
         "PDF downloaded! You can chat now.";
 }
 
-/* ------------ UPLOAD VIDEO ------------ */
 document.getElementById("uploadForm").onsubmit = async (e) => {
     e.preventDefault();
 
@@ -191,8 +234,6 @@ document.getElementById("uploadForm").onsubmit = async (e) => {
     await handlePdfResponse(response);
 };
 
-
-/* ------------ YOUTUBE LINK ------------ */
 async function processYT() {
     const link = document.getElementById("ytLink").value.trim();
     if (link === "") {
@@ -211,8 +252,6 @@ async function processYT() {
     await handlePdfResponse(response);
 }
 
-
-/* ------------- CHATBOT ------------- */
 async function sendChat() {
     const text = document.getElementById("chat-input").value.trim();
     if (!text) return;
