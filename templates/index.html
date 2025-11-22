@@ -4,74 +4,87 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="static/logo2.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Smart Meeting Summariser</title>
 
     <style>
-        .logo {
-            width: 60px;
-            height: 60px;
-            margin-right: 15px;
-        }
-
         body {
             margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
             font-family: "Segoe UI", Arial, sans-serif;
             background: #0d0d0d;
             color: white;
         }
 
-        /* ---------------- HEADER ---------------- */
-        #header {
-            width: 100%;
+        /* HEADER */
+        header {
             display: flex;
             align-items: center;
             gap: 15px;
             padding: 15px 25px;
             background: #0f0f0f;
             border-bottom: 2px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        #header h1 {
-            font-size: 28px;
-            color: white;
+        header img {
+            width: 55px;
+            height: 55px;
+        }
+
+        header h1 {
             margin: 0;
+            font-size: 26px;
             font-weight: 600;
         }
 
-        /* ---------------- MAIN PAGE LAYOUT ---------------- */
-        #main {
-            display: flex;
-            height: 100%;
+        /* HERO */
+        #hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(145deg, #111, #181818);
+            border-bottom: 2px solid #222;
         }
 
-        /* ---------------- LEFT PANEL ---------------- */
-        #left-panel {
-            width: 70%;
+        #hero h2 { font-size: 34px; color: #4aff8f; }
+        #hero p { max-width: 650px; margin: auto; font-size: 18px; color: #ccc; }
+
+        /* FEATURES */
+        #features {
+            padding: 40px 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-box {
+            background: #141414;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #222;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .feature-box:hover {
+            transform: scale(1.03);
+            background: #1a1a1a;
+        }
+
+        /* MAIN SECTION (VIDEO → PDF) */
+        #main-section {
+            padding: 40px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            background: #111;
-            border-right: 2px solid #222;
-            flex-direction: column;
         }
 
-        .box {
-            width: 60%;
+        #convert-box {
+            width: 65%;
             background: #1a1a1a;
-            padding: 35px;
+            padding: 40px;
             border-radius: 12px;
+            border: 1px solid #333;
             text-align: center;
-            box-shadow: 0 0 20px rgba(255,255,255,0.08);
-        }
-
-        .box h2 {
-            font-size: 22px;
-            color: #eee;
-            margin-bottom: 20px;
         }
 
         input[type="file"],
@@ -86,7 +99,6 @@
         }
 
         button {
-            margin-top: 15px;
             padding: 12px 20px;
             background: #333;
             color: white;
@@ -94,152 +106,178 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 15px;
-        }
-
-        button:hover {
-            background: #555;
-        }
-
-        hr {
-            border: 1px solid #333;
-            margin: 25px 0;
-        }
-
-        #status {
             margin-top: 15px;
-            color: #bbb;
-            font-size: 15px;
         }
 
-        /* ---------------- CHAT PANEL ---------------- */
-        #chat-panel {
-            width: 30%;
-            padding: 20px;
-            background: #0f0f0f;
+        button:hover { background: #555; }
+
+        hr { border: 1px solid #333; margin: 30px 0; }
+
+        /* SEPARATE CHATBOT SECTION */
+        #chat-section {
+            padding: 60px 50px;
+            background: #111;
+            border-top: 2px solid #222;
+            border-bottom: 2px solid #222;
+        }
+
+        #chat-section h2 {
+            text-align: center;
+            font-size: 28px;
+            color: #4aff8f;
+            margin-bottom: 25px;
+        }
+
+        #chat-container {
+            width: 70%;
+            margin: auto;
+            background: #141414;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #222;
             display: flex;
             flex-direction: column;
+            height: 420px;
+        }
+
+        #chat-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #333;
         }
 
         #messages {
             flex-grow: 1;
-            margin-top: 10px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #141414;
-            border: 1px solid #222;
             overflow-y: auto;
+            padding: 15px;
         }
 
         .user { color: #d4d4d4; font-weight: 600; margin: 10px 0; }
         .bot  { color: #4aff8f; font-weight: 600; margin: 10px 0; }
 
         #chat-input {
-            width: 100%;
             padding: 12px;
-            margin-top: 12px;
+            border: none;
+            margin-top: 10px;
             border-radius: 8px;
             background: #1a1a1a;
-            border: 1px solid #333;
             color: white;
         }
 
+        /* Make Chatbot Expand */
+        #chat-container.large {
+            height: 650px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #888;
+            background: #0f0f0f;
+            border-top: 1px solid #222;
+        }
     </style>
 </head>
 
 <body>
 
-
-<div id="header">
-    <img src="{{ url_for('static', filename='logo2.png') }}" class="logo">
+<header>
+    <img src="{{ url_for('static', filename='logo2.png') }}">
     <h1>Smart Meeting Summariser</h1>
-</div>
+</header>
 
-<div id="main">
+<section id="hero">
+    <h2>Your Meetings → Instant Notes PDF</h2>
+    <p>Upload or paste a YouTube link. Let AI convert your meeting into structured notes, key points, summaries, and more.</p>
+</section>
 
+<section id="features">
+    <div class="feature-box">🎥 Upload Videos</div>
+    <div class="feature-box">🔗 Paste YouTube Links</div>
+    <div class="feature-box">📝 Generate Notes PDF</div>
+    <div class="feature-box">🤖 Intelligent Chatbot</div>
+    <div class="feature-box">⚡ Fast & Accurate</div>
+    <div class="feature-box">📤 Easy to Download</div>
+</section>
 
-    <div id="left-panel">
-        <div class="box">
+<section id="main-section">
+    <div id="convert-box">
+        <h2>Convert Video / YouTube → Notes PDF</h2>
 
-            <h2>Convert Video / YouTube Link → Notes PDF</h2>
+        <form id="uploadForm">
+            <input type="file" id="videoFile" accept="video/*"><br>
+            <button type="submit">Upload Video → PDF</button>
+        </form>
 
-          
-            <form id="uploadForm">
-                <input type="file" id="videoFile" accept="video/*"><br>
-                <button type="submit">Upload Video → PDF</button>
-            </form>
+        <hr>
 
-            <hr>
+        <input type="text" id="ytLink" placeholder="Enter YouTube link">
+        <button onclick="processYT()">YouTube → PDF</button>
 
-           
-            <input type="text" id="ytLink" placeholder="Enter YouTube link">
-            <button onclick="processYT()">YouTube → PDF</button>
-
-            <p id="status"></p>
-
-        </div>
+        <p id="status"></p>
     </div>
+</section>
 
-  
-    <div id="chat-panel">
-        <h3 style="text-align:center; color:#aaa;">Chatbot</h3>
+<!-- SEPARATE CHATBOT SECTION -->
+<section id="chat-section">
+    <h2>Chat With Your Notes</h2>
 
-        <button onclick="resetCHAT()">New Chat</button>
+    <div id="chat-container">
+        <div id="chat-header">
+            <span>AI Chat Assistant</span>
+            <button onclick="toggleChatSize()">Expand</button>
+        </div>
 
         <div id="messages"></div>
 
-        <input id="chat-input" type="text" placeholder="Type your message...">
+        <input id="chat-input" type="text" placeholder="Type your question...">
         <button onclick="sendChat()">Send</button>
     </div>
+</section>
 
-</div>
+<footer>
+    © 2025 Smart Meeting Summariser — Powered by AI Automation
+</footer>
+
 
 <script>
+function toggleChatSize() {
+    document.getElementById("chat-container").classList.toggle("large");
+}
+
 async function handlePdfResponse(response) {
     if (!response.ok) {
-        const txt = await response.text();
-        document.getElementById("status").innerText = "Error: " + txt;
-        console.error("Server error:", txt);
+        document.getElementById("status").innerText = "Error: " + await response.text();
         return;
     }
-
     const blob = await response.blob();
     const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
+    link.href = URL.createObjectURL(blob);
     link.download = "notes.pdf";
     link.click();
-
-    document.getElementById("status").innerText =
-        "PDF downloaded! You can chat now.";
+    document.getElementById("status").innerText = "PDF downloaded!";
 }
 
 document.getElementById("uploadForm").onsubmit = async (e) => {
     e.preventDefault();
+    const f = document.getElementById("videoFile").files[0];
+    if (!f) return alert("Choose a video!");
 
-    const file = document.getElementById("videoFile").files[0];
-    if (!file) {
-        alert("Choose a video!");
-        return;
-    }
+    const form = new FormData();
+    form.append("video", f);
 
-    const formData = new FormData();
-    formData.append("video", file);
+    document.getElementById("status").innerText = "Processing...";
 
-    document.getElementById("status").innerText = "Processing video...";
-
-    const response = await fetch("/upload-video", {
-        method: "POST",
-        body: formData
-    });
-
+    const response = await fetch("/upload-video", { method: "POST", body: form });
     await handlePdfResponse(response);
 };
 
 async function processYT() {
     const link = document.getElementById("ytLink").value.trim();
-    if (link === "") {
-        alert("Enter YouTube link!");
-        return;
-    }
+    if (!link) return alert("Enter a link!");
 
     document.getElementById("status").innerText = "Processing YouTube link...";
 
@@ -259,13 +297,13 @@ async function sendChat() {
     addMessage(text, "user");
     document.getElementById("chat-input").value = "";
 
-    const response = await fetch("/chat", {
+    const res = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text })
     });
 
-    const data = await response.json();
+    const data = await res.json();
     addMessage(data.response || data.error, "bot");
 }
 
@@ -276,11 +314,6 @@ function addMessage(msg, type) {
     p.innerText = msg;
     box.appendChild(p);
     box.scrollTop = box.scrollHeight;
-}
-
-async function resetCHAT() {
-    await fetch("/reset-chat", { method: "POST" });
-    document.getElementById("messages").innerHTML = "";
 }
 </script>
 
